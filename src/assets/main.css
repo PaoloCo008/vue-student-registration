@@ -1,0 +1,60 @@
+@import './base.css';
+
+#app {
+  width: 100%;
+  margin: 0 auto;
+  font-weight: normal;
+  height: 100svh;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+  padding: 3px;
+}
+
+/* .el-form {
+  max-width: 425px;
+  width: 100%;
+}
+
+.el-input {
+  --el-input-placeholder-color: #fff;
+  --el-input-icon-color: #fff;
+}
+
+.el-input__wrapper {
+  background-color: transparent;
+  padding: 1rem;
+  border-radius: 5px;
+}
+
+.el-input__inner {
+  padding-left: 1.25rem;
+  letter-spacing: 1px;
+  font-size: 1.125rem;
+  color: white;
+}
+
+.el-input__inner::placeholder {
+  text-transform: uppercase;
+}
+
+.el-input__prefix {
+  font-size: 1.75rem;
+} */
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+}
