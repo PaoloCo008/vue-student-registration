@@ -8,7 +8,10 @@ import { ElMessage } from 'element-plus'
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuthorized = useLocalStorage<boolean>('isAuthorized', false)
-  const user = useLocalStorage<User>('user', { username: 'testuser', password: 'test12345' })
+  const user = useLocalStorage<User>('user', {
+    username: import.meta.env.VITE_ADMIN_USERNAME,
+    password: import.meta.env.VITE_ADMIN_PASSWORD,
+  })
   const passwordResetKey = useLocalStorage<string | null>('passwordResetKey', null)
 
   const router = useRouter()
