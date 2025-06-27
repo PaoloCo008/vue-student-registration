@@ -47,8 +47,6 @@ export const useStudentStore = defineStore('students', () => {
     const [field, direction] = sortQuery.split('-')
     const modifier = direction === 'asc' ? 1 : -1
 
-    // // TODO: add admission date to sort
-
     const students = getFilteredStudents.value
 
     if (field === 'age') {

@@ -16,7 +16,6 @@ export const sortByOptions = [
   { value: 'age-desc', label: 'Sort by age (descending)' },
   { value: 'age-asc', label: 'Sort by age (ascending)' },
   { value: 'admission-desc', label: 'Sort by registered date (descending)' },
-  { value: 'admission-asc', label: 'Sort by registered date (ascending)' },
 ]
 
 export const students: Student[] = Array.from({ length: 10 }, () => {
