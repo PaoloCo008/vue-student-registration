@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import useUrl from '@/composables/useUrl'
 import { courses } from '@/lib/constants'
-import { ref, watch } from 'vue'
-import { useRoute, type LocationQueryValue } from 'vue-router'
 
-const { setUrlQuery, removeUrlQuery } = useUrl()
-const route = useRoute()
-const courseRef = ref<LocationQueryValue | LocationQueryValue[]>(route.query.course)
+const courseRef = useUrl('course', 'all', 'homepage')
 
-watch(courseRef, () => {
-  if (courseRef.value !== 'all') {
-    setUrlQuery('homepage', 'course', courseRef.value as string)
-  } else {
-    removeUrlQuery('homepage', 'course')
-  }
-})
+// const courseRef = ref<LocationQueryValue | LocationQueryValue[]>(route.query.course)
+
+// watch(courseRef, () => {
+//   if (courseRef.value !== 'all') {
+//     setUrlQuery('homepage', 'course', courseRef.value as string)
+//   } else {
+//     removeUrlQuery('homepage', 'course')
+//   }
+// })
 </script>
 
 <template>

@@ -1,8 +1,33 @@
-import { useRoute, useRouter } from 'vue-router'
+import { useDebounceFn } from '@vueuse/core'
+import { watch, ref } from 'vue'
+import { type LocationQueryValue, useRoute, useRouter } from 'vue-router'
 
-export default function useUrl() {
+export default function useUrl(
+  key: string,
+  defaultValue: string,
+  routeName: string,
+  { debounce = false, delay = 500 }: { debounce?: boolean; delay?: number } = {},
+) {
   const router = useRouter()
   const route = useRoute()
+
+  const controlRef = ref<LocationQueryValue | LocationQueryValue[]>(
+    route.query[key] || defaultValue,
+  )
+
+  let callback = () => {
+    if (controlRef.value !== defaultValue) {
+      setUrlQuery(routeName, key, controlRef.value as string)
+    } else {
+      removeUrlQuery(routeName, key)
+    }
+  }
+
+  if (debounce) {
+    callback = useDebounceFn(callback, delay)
+  }
+
+  watch(controlRef, callback)
 
   function removeUrlQuery(pathName: string, key: string) {
     const query = { ...route.query }
@@ -18,5 +43,5 @@ export default function useUrl() {
     router.replace({ name: pathName, query })
   }
 
-  return { removeUrlQuery, setUrlQuery }
+  return controlRef
 }

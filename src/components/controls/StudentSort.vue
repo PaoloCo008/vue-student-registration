@@ -1,19 +1,16 @@
 <script setup lang="ts">
 import { sortByOptions } from '@/lib/constants'
-import { ref, watch } from 'vue'
-import { useRoute, type LocationQueryValue } from 'vue-router'
 import useUrl from '../../composables/useUrl'
 
-const route = useRoute()
-const { setUrlQuery } = useUrl()
+const sortByRef = useUrl('sortby', 'admission-desc', 'homepage')
 
-const sortByRef = ref<LocationQueryValue | LocationQueryValue[]>(
-  route.query.sortby || 'admission-desc',
-)
+// const sortByRef = ref<LocationQueryValue | LocationQueryValue[]>(
+//   route.query.sortby || 'admission-desc',
+// )
 
-watch(sortByRef, () => {
-  setUrlQuery('homepage', 'sortby', sortByRef.value as string)
-})
+// watch(sortByRef, () => {
+//   setUrlQuery('homepage', 'sortby', sortByRef.value as string)
+// })
 </script>
 
 <template>

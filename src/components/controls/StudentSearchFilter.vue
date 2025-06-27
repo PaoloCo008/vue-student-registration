@@ -1,23 +1,7 @@
 <script setup lang="ts">
 import useUrl from '@/composables/useUrl'
-import { useDebounceFn } from '@vueuse/core'
-import { ref, watch } from 'vue'
-import { useRoute, type LocationQueryValue } from 'vue-router'
 
-const route = useRoute()
-const { setUrlQuery, removeUrlQuery } = useUrl()
-
-const searchRef = ref<LocationQueryValue | LocationQueryValue[]>(route.query.search)
-
-const debounce = useDebounceFn(() => {
-  if (searchRef.value !== '') {
-    setUrlQuery('homepage', 'search', searchRef.value as string)
-  } else {
-    removeUrlQuery('homepage', 'search')
-  }
-}, 500)
-
-watch(searchRef, debounce)
+const searchRef = useUrl('search', '', 'homepage', { debounce: true })
 </script>
 
 <template>

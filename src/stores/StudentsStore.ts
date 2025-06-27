@@ -8,11 +8,12 @@ import type { Student } from '@/types/globals'
 import useLocalStorage from '@/composables/useLocalStorage'
 
 import { getFullName } from '@/lib/helpers'
+import { students } from '@/lib/constants'
 
 export const useStudentStore = defineStore('students', () => {
   const route = useRoute()
 
-  const studentList = useLocalStorage<Student[]>('students', [])
+  const studentList = useLocalStorage<Student[]>('students', students)
 
   const getStudentById = computed(() => (id: string) => {
     return studentList.value.find((student) => student.id === id)
@@ -20,7 +21,7 @@ export const useStudentStore = defineStore('students', () => {
 
   const getFilteredStudents = computed(() => {
     const searchQuery = route.query.search as string
-    const courseQuery = route.query.course as string
+    const courseQuery = (route.query.course as string) || ''
 
     let filteredStudents = [...studentList.value]
 
