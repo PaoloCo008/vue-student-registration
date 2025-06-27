@@ -9,7 +9,6 @@ const authStore = useAuthStore()
 
 const passwordResetFormRef = ref<FormInstance>()
 const passwordResetForm = reactive<PasswordResetForm>({
-  prevPassword: '',
   newPassword: '',
   passwordConfirm: '',
 })
@@ -17,7 +16,7 @@ const passwordResetForm = reactive<PasswordResetForm>({
 function validatePasswordConfirm(rule: any, value: any, callback: any) {
   console.log({ rule, value, callback })
   if (value === '') {
-    callback(new Error('Password is required'))
+    callback(new Error('Please re-enter your new password'))
   } else if (value !== passwordResetForm.newPassword) {
     callback(new Error("Password don't match"))
   } else {
@@ -25,8 +24,37 @@ function validatePasswordConfirm(rule: any, value: any, callback: any) {
   }
 }
 
+function validateNewPassword(rule: any, value: any, callback: any) {
+  console.log({ rule, value, callback })
+  if (value === '') {
+    return callback(new Error('Please enter your new password'))
+  }
+
+  if (!/[A-Z]/.test(value)) {
+    return callback(new Error('Password must contain at least one uppercase letter.'))
+  }
+
+  if (!/[a-z]/.test(value)) {
+    return callback(new Error('Password must contain at least one lowercase letter.'))
+  }
+
+  if (!/[0-9]/.test(value)) {
+    return callback(new Error('Password must contain at least one number.'))
+  }
+
+  if (!/[^a-zA-Z0-9]/.test(value)) {
+    return callback(new Error('Password must contain at least one special character.'))
+  }
+
+  return callback()
+}
+
 const changePasswordRules = reactive<FormRules<PasswordResetForm>>({
-  newPassword: [{ required: true, message: 'Please your enter new password', trigger: 'blur' }],
+  newPassword: [
+    { min: 6, message: 'Password must be at least 6 characters long.' },
+    { max: 100, message: 'Password cannot exceed 100 characters.' },
+    { validator: validateNewPassword, trigger: 'blur' },
+  ],
   passwordConfirm: [{ validator: validatePasswordConfirm, trigger: 'blur' }],
 })
 

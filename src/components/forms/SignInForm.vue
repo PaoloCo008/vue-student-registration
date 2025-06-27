@@ -18,7 +18,7 @@ function validateLoginPassword(rule: any, value: any, callback: any) {
   if (value === '') {
     callback(new Error('Password is required'))
   } else if (value !== authStore.user.password) {
-    callback(new Error('Invalid password'))
+    callback(new Error('Please provide a valid password.'))
   } else {
     callback()
   }
@@ -28,7 +28,7 @@ function validateLoginUsername(rule: any, value: any, callback: any) {
   if (value === '') {
     callback(new Error('Username is required'))
   } else if (value !== authStore.user.username) {
-    callback(new Error('Invalid Username'))
+    callback(new Error('Please provide a valid username.'))
   } else {
     callback()
   }
@@ -36,7 +36,11 @@ function validateLoginUsername(rule: any, value: any, callback: any) {
 
 const loginFormRules = reactive<FormRules<LoginForm>>({
   username: [{ validator: validateLoginUsername }],
-  password: [{ validator: validateLoginPassword }],
+  password: [
+    { min: 6, message: 'Password must be at least 6 characters long.' },
+    { max: 100, message: 'Password cannot exceed 100 characters.' },
+    { validator: validateLoginPassword },
+  ],
 })
 
 async function submitForm(formEl: FormInstance | undefined) {

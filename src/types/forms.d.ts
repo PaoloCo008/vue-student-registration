@@ -4,7 +4,6 @@ export interface LoginForm {
 }
 
 export interface PasswordResetForm {
-  prevPassword: string
   newPassword: string
   passwordConfirm: string
 }

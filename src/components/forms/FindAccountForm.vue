@@ -14,9 +14,9 @@ const passwordResetForm = reactive<FindAccountForm>({
 
 function validateUsername(rule: any, value: any, callback: any) {
   if (value === '') {
-    callback(new Error('Please enter your username'))
+    callback(new Error('Please enter your username.'))
   } else if (value !== authStore.user.username) {
-    callback(new Error('No user found with that username'))
+    callback(new Error('No user found with that username.'))
   } else {
     callback()
   }
