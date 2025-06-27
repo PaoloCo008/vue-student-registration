@@ -14,7 +14,6 @@ const passwordResetForm = reactive<PasswordResetForm>({
 })
 
 function validatePasswordConfirm(rule: any, value: any, callback: any) {
-  console.log({ rule, value, callback })
   if (value === '') {
     callback(new Error('Please re-enter your new password'))
   } else if (value !== passwordResetForm.newPassword) {
@@ -25,7 +24,6 @@ function validatePasswordConfirm(rule: any, value: any, callback: any) {
 }
 
 function validateNewPassword(rule: any, value: any, callback: any) {
-  console.log({ rule, value, callback })
   if (value === '') {
     return callback(new Error('Please enter your new password'))
   }

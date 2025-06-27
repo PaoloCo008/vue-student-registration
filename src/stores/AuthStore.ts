@@ -1,9 +1,11 @@
+import type { User } from '@/types/globals'
+
+import useLocalStorage from '@/composables/useLocalStorage'
+
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 
 import { v4 as uuidv4 } from 'uuid'
-import useLocalStorage from '@/composables/useLocalStorage'
-import type { User } from '@/types/globals'
 import { ElMessage } from 'element-plus'
 
 export const useAuthStore = defineStore('auth', () => {

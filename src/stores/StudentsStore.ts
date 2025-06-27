@@ -1,12 +1,13 @@
-import useLocalStorage from '@/composables/useLocalStorage'
-import { getFullName } from '@/lib/helpers'
-
-import type { Student } from '@/types/globals'
-
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+
+import type { Student } from '@/types/globals'
+
+import useLocalStorage from '@/composables/useLocalStorage'
+
+import { getFullName } from '@/lib/helpers'
 
 export const useStudentStore = defineStore('students', () => {
   const route = useRoute()

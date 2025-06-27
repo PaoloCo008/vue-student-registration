@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { Student } from '@/types/globals.js'
 
+import StudentForm from '@/components/forms/StudentForm.vue'
+import AppDrawer from '../AppDrawer.vue'
+
 import { computed } from 'vue'
 
 import { useStudentStore } from '../../stores/StudentsStore.ts'
-import StudentForm from '@/components/forms/StudentForm.vue'
-
 import { getFullName, truncate } from '../../lib/helpers.ts'
-import AppDrawer from '../AppDrawer.vue'
 
 const circleUrl = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 

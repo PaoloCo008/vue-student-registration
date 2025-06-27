@@ -3,6 +3,7 @@ import MainView from '@/views/MainView.vue'
 
 import { createWebHistory, createRouter } from 'vue-router'
 import { useAuthStore } from '../stores/AuthStore'
+
 import StudentList from '@/components/students/StudentList.vue'
 import SignInForm from '@/components/forms/SignInForm.vue'
 import ChangePasswordForm from '@/components/forms/ChangePasswordForm.vue'

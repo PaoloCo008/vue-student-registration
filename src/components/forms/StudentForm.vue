@@ -31,6 +31,13 @@ const studentForm = reactive<StudentForm>({
   course: props.student?.course || courses[0],
 })
 
+watch(
+  () => studentForm.birthdate,
+  () => {
+    studentForm.age = calculateAge(studentForm.birthdate)
+  },
+)
+
 function validateAge(rule: any, value: any, callback: any) {
   if (value === '') {
     callback(new Error('Age is required'))
@@ -102,13 +109,6 @@ const studentFormRules = reactive<FormRules<StudentForm>>({
 
   course: [{ required: true, message: 'Please select a course', trigger: 'blur' }],
 })
-
-watch(
-  () => studentForm.birthdate,
-  () => {
-    studentForm.age = calculateAge(studentForm.birthdate)
-  },
-)
 
 async function submitForm(formEl: FormInstance | undefined) {
   if (!formEl) return
