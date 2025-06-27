@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
+import type { Student } from '@/types/globals'
+import type { StudentForm } from '@/types/forms'
 
 import { courses } from '@/lib/constants'
 
 import { computed, reactive, ref, watch } from 'vue'
 import { useStudentStore } from '../../stores/StudentsStore'
-import { compareAsc } from 'date-fns'
 
+import { compareAsc } from 'date-fns'
 import { v4 as uuidv4 } from 'uuid'
 import { format } from 'date-fns'
-import type { Student } from '@/types/globals'
-import type { StudentForm } from '@/types/forms'
-import { calculateAge } from '@/lib/helpers'
+import { calculateAge, capitalize } from '@/lib/helpers'
 
 const props = defineProps<{ student?: Student }>()
 const emits = defineEmits<{ (e: 'register'): void; (e: 'edit'): void }>()
@@ -114,9 +114,9 @@ async function submitForm(formEl: FormInstance | undefined) {
   if (!formEl) return
 
   const newStudent = {
-    firstName: studentForm.firstName.trim(),
-    middleName: studentForm.middleName.trim(),
-    lastName: studentForm.lastName.trim(),
+    firstName: capitalize(studentForm.firstName),
+    middleName: capitalize(studentForm.middleName),
+    lastName: capitalize(studentForm.lastName),
     birthdate: format(studentForm.birthdate, 'LLL dd, yyyy'),
     age: Number(studentForm.age),
     address: studentForm.address.trim(),

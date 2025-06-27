@@ -1,19 +1,23 @@
 export function getFullName(firstName: string, middleName: string, lastName: string) {
-  return `${capitalize(firstName)} ${getMiddleInitial(middleName)}. ${capitalize(lastName)}`
+  return `${capitalize(firstName)} ${getMiddleInitial(middleName)} ${capitalize(lastName)}`
 }
 
 function getMiddleInitial(name: string) {
   const fragments = name.trim().split(' ')
 
   if (fragments.length > 1) {
-    return `${fragments[0][0].toUpperCase()}. ${fragments[1][0].toUpperCase()}`
+    return `${capitalize(fragments[0][0])}. ${capitalize(fragments[1][0])}.`
   }
 
-  return fragments[0][0].toUpperCase()
+  return capitalize(fragments[0][0])
 }
 
-function capitalize(name: string) {
-  return name[0].toUpperCase() + name.slice(1)
+export function capitalize(word: string) {
+  let fragments = word.trim().split(' ')
+
+  fragments = fragments.map((f) => f[0].toUpperCase() + f.slice(1).toLocaleLowerCase())
+
+  return fragments.join(' ')
 }
 
 export function truncate(word: string, maxChars: number) {

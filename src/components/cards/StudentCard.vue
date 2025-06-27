@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Student } from '@/types/globals.js'
 
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 import { useStudentStore } from '../../stores/StudentsStore.ts'
 import StudentForm from '@/components/forms/StudentForm.vue'
@@ -14,8 +14,6 @@ const circleUrl = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1ep
 const props = defineProps<{ student: Student }>()
 
 const { id, firstName, middleName, lastName, birthdate, address, age, course } = props.student
-
-const drawer = ref(false)
 
 const studentStore = useStudentStore()
 
@@ -74,7 +72,7 @@ const fullName = computed(() => getFullName(firstName, middleName, lastName))
         <el-col :span="9">
           <span class="label">Address:</span>
           <p>
-            {{ truncate(address, 6) }}
+            {{ truncate(address, 8) }}
           </p>
         </el-col>
       </el-tooltip>
