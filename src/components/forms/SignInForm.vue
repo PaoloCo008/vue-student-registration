@@ -56,7 +56,12 @@ async function submitForm(formEl: FormInstance | undefined) {
 </script>
 
 <template>
-  <el-form ref="loginFormRef" :rules="loginFormRules" :model="loginForm">
+  <el-form
+    ref="loginFormRef"
+    :rules="loginFormRules"
+    :model="loginForm"
+    @submit.prevent="submitForm(loginFormRef)"
+  >
     <el-form-item prop="username">
       <el-input v-model.trim="loginForm.username" placeholder="username" :validate-event="false">
         <template #prefix>
@@ -78,7 +83,7 @@ async function submitForm(formEl: FormInstance | undefined) {
       </el-input>
     </el-form-item>
 
-    <el-button type="primary" @click="submitForm(loginFormRef)"> Login </el-button>
+    <el-button type="primary" native-type="submit"> Login </el-button>
     <RouterLink :to="{ name: 'recover' }" class="form__link">Forgot Password?</RouterLink>
   </el-form>
 </template>

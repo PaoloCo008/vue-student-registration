@@ -2,7 +2,7 @@
 import { sortByOptions } from '@/lib/constants'
 import useUrl from '../../composables/useUrl'
 
-const sortByRef = useUrl('sortby', 'admission-desc', 'homepage')
+const sortByRef = useUrl('sortby', 'admission-asc', 'homepage')
 
 // const sortByRef = ref<LocationQueryValue | LocationQueryValue[]>(
 //   route.query.sortby || 'admission-desc',

@@ -4,14 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/",
-    "host": "vite --host"
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

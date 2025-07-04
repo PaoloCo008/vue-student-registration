@@ -17,7 +17,7 @@ const { id, firstName, middleName, lastName, birthdate, address, age, course } =
 
 const studentStore = useStudentStore()
 
-const fullName = computed(() => getFullName(firstName, middleName, lastName))
+const fullName = computed(() => getFullName(firstName, lastName, middleName))
 </script>
 
 <template>
@@ -72,7 +72,7 @@ const fullName = computed(() => getFullName(firstName, middleName, lastName))
         <el-col :span="9">
           <span class="label">Address:</span>
           <p>
-            {{ truncate(address, 8) }}
+            {{ truncate(address, 9) }}
           </p>
         </el-col>
       </el-tooltip>
@@ -86,7 +86,7 @@ const fullName = computed(() => getFullName(firstName, middleName, lastName))
 }
 
 .card__course {
-  margin-bottom: 2rem;
+  padding: 0.5rem 0.25rem 1rem;
 }
 
 .el-avatar {
@@ -96,10 +96,10 @@ const fullName = computed(() => getFullName(firstName, middleName, lastName))
 
 .el-card {
   height: 350px;
+  width: 320px;
   position: relative;
   border-radius: 1rem;
   text-align: center;
-  padding: 0.5rem;
   box-shadow: 2px 2px 8px rgb(75, 160, 238, 0.5);
 }
 
@@ -118,7 +118,6 @@ const fullName = computed(() => getFullName(firstName, middleName, lastName))
 
 :deep(.el-avatar img) {
   display: block;
-  max-width: 100px;
   max-width: 100px;
 }
 

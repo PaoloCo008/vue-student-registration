@@ -67,12 +67,16 @@ router.beforeEach((to, from, next) => {
     return next({ name: 'signin' })
   }
 
-  if (to.name === 'signin' && authStore.isAuthorized) {
-    return next({ name: 'homepage' })
+  if (to.name === 'findaccount' && authStore.isAuthorized) {
+    return next({ name: 'signin' })
   }
 
   if (to.name === 'passwordreset' && !authStore.passwordResetKey) {
     return next({ name: 'signin' })
+  }
+
+  if (to.name === 'signin' && authStore.isAuthorized) {
+    return next({ name: 'homepage' })
   }
 
   if (from.name === 'passwordreset' && authStore.passwordResetKey) {

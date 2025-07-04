@@ -8,8 +8,9 @@ export type Course =
 export interface Student {
   id: string
   renderId: string
+  registeredDate: Date
   firstName: string
-  middleName: string
+  middleName?: string
   lastName: string
   birthdate: string
   age: number

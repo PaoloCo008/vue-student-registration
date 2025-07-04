@@ -7,8 +7,8 @@ import type { Student } from '@/types/globals'
 
 import useLocalStorage from '@/composables/useLocalStorage'
 
-import { getFullName } from '@/lib/helpers'
 import { students } from '@/lib/constants'
+import { getFullName } from '@/lib/helpers'
 
 export const useStudentStore = defineStore('students', () => {
   const route = useRoute()
@@ -23,6 +23,18 @@ export const useStudentStore = defineStore('students', () => {
     const searchQuery = route.query.search as string
     const courseQuery = (route.query.course as string) || ''
 
+    let queries = [...new Set(searchQuery?.split(' ') || [])]
+
+    if (queries.length > 1) {
+      queries = queries.filter((query, i, arr) => {
+        const regex = new RegExp(`^${query}`, 'gim')
+
+        if (arr.filter((q) => q !== query).some((el: string) => regex.test(el))) return false
+
+        return true
+      })
+    }
+
     let filteredStudents = [...studentList.value]
 
     if (courseQuery) {
@@ -30,20 +42,28 @@ export const useStudentStore = defineStore('students', () => {
     }
 
     if (searchQuery) {
-      filteredStudents = filteredStudents.filter(
-        (s) =>
-          getFullName(s.firstName, s.lastName, s.lastName)
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase()) ||
-          s.address.toLocaleLowerCase().includes(searchQuery.toLowerCase()),
-      )
+      filteredStudents = queries.reduce((acc, query) => {
+        const regex = new RegExp(`^${query}|${query}`, 'gim')
+
+        return acc.filter((student) => {
+          const filterFields = ['firstName', 'middleName', 'lastName', 'address']
+
+          for (let i = 0; i < filterFields.length; i++) {
+            if (regex.test(student[filterFields[i] as keyof Student] as string)) {
+              filterFields.splice(i, 1)
+              return true
+            }
+          }
+          return false
+        })
+      }, filteredStudents)
     }
 
     return filteredStudents
   })
 
   const getSortedStudents = computed(() => {
-    const sortQuery = (route.query.sortby as string) || 'admission-desc'
+    const sortQuery = (route.query.sortby as string) || 'admission-asc'
 
     const [field, direction] = sortQuery.split('-')
     const modifier = direction === 'asc' ? 1 : -1
@@ -54,6 +74,22 @@ export const useStudentStore = defineStore('students', () => {
       return students.sort((a, b) => (a[field] - b[field]) * modifier)
     }
 
+    if (field === 'name') {
+      return students.sort(
+        (a, b) =>
+          getFullName(a.firstName, a.lastName, a.middleName).localeCompare(
+            getFullName(b.firstName, b.lastName, b.middleName),
+          ) * modifier,
+      )
+    }
+
+    if (field === 'admission') {
+      return students.sort(
+        (a, b) =>
+          (new Date(b.registeredDate).getTime() - new Date(a.registeredDate).getTime()) * modifier,
+      )
+    }
+
     return students
   })
 
@@ -62,7 +98,7 @@ export const useStudentStore = defineStore('students', () => {
   })
 
   function registerStudent(student: Student) {
-    studentList.value = [...studentList.value, student]
+    studentList.value = [student, ...studentList.value]
 
     ElMessage({
       type: 'success',
@@ -95,7 +131,7 @@ export const useStudentStore = defineStore('students', () => {
       })
   }
 
-  function editStudent(id: string | undefined, newStudentData: Student) {
+  function editStudent(id: string, newStudentData: Student) {
     setTimeout(() => {
       studentList.value = studentList.value.map((student) =>
         student.id === id ? newStudentData : student,

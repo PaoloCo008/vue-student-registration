@@ -1,5 +1,5 @@
-export function getFullName(firstName: string, middleName: string, lastName: string) {
-  return `${capitalize(firstName)} ${getMiddleInitial(middleName)} ${capitalize(lastName)}`
+export function getFullName(firstName: string, lastName: string, middleName?: string) {
+  return `${capitalize(firstName)} ${middleName ? getMiddleInitial(middleName) : ''} ${capitalize(lastName)}`
 }
 
 function getMiddleInitial(name: string) {
@@ -9,7 +9,7 @@ function getMiddleInitial(name: string) {
     return `${capitalize(fragments[0][0])}. ${capitalize(fragments[1][0])}.`
   }
 
-  return capitalize(fragments[0][0])
+  return capitalize(fragments[0][0]) + '.'
 }
 
 export function capitalize(word: string) {
@@ -31,4 +31,16 @@ export function calculateAge(date: Date | string) {
   const ageDate = new Date(diff)
 
   return Math.abs(ageDate.getUTCFullYear() - 1970)
+}
+
+export function validNameInput(name: string) {
+  const fragments = name.split('-')
+
+  const names: { [key: string]: number } = {}
+
+  fragments.forEach((name) => {
+    return names[name] ? (names[name] += 1) : (names[name] = 1)
+  })
+
+  return !Object.keys(names).some((name) => names[name] >= 3)
 }

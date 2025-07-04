@@ -18,9 +18,16 @@ import StudentSort from './StudentSort.vue'
 .control-group {
   display: flex;
   gap: 1rem;
+  flex-direction: column;
 }
 
 .controls-wrapper {
   margin-bottom: 2rem;
+}
+
+@media screen and (min-width: 850px) {
+  .control-group {
+    flex-direction: row;
+  }
 }
 </style>

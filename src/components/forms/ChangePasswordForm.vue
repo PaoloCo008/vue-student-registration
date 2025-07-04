@@ -69,13 +69,19 @@ async function submitForm(formEl: FormInstance | undefined) {
 </script>
 
 <template>
-  <el-form ref="passwordResetFormRef" :rules="changePasswordRules" :model="passwordResetForm">
+  <el-form
+    ref="passwordResetFormRef"
+    :rules="changePasswordRules"
+    :model="passwordResetForm"
+    @submit.prevent="submitForm(passwordResetFormRef)"
+  >
     <el-form-item prop="newPassword">
       <el-input
         v-model.trim="passwordResetForm.newPassword"
         placeholder="New Password"
         type="password"
         show-password
+        :validate-event="false"
       >
         <template #prefix>
           <el-icon><Lock /></el-icon>
@@ -88,6 +94,7 @@ async function submitForm(formEl: FormInstance | undefined) {
         placeholder="Password Confirm"
         type="password"
         show-password
+        :validate-event="false"
       >
         <template #prefix>
           <el-icon><Lock /></el-icon>
@@ -95,9 +102,7 @@ async function submitForm(formEl: FormInstance | undefined) {
       </el-input>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="submitForm(passwordResetFormRef)">
-        Reset Password
-      </el-button>
+      <el-button type="primary" native-type="submit"> Reset Password </el-button>
     </el-form-item>
   </el-form>
 </template>

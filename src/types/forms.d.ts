@@ -10,7 +10,7 @@ export interface PasswordResetForm {
 
 export interface StudentForm {
   firstName: string
-  middleName: string
+  middleName?: string
   lastName: string
   birthdate: Date | string
   age: number | string

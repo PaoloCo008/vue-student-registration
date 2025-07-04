@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
-import type { Student } from '@/types/globals'
+import type { Course, Student } from '@/types/globals'
 import type { StudentForm } from '@/types/forms'
 
-import { courses } from '@/lib/constants'
+import { courses, MAX_AGE, MIN_AGE } from '@/lib/constants'
 
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watchEffect } from 'vue'
 import { useStudentStore } from '../../stores/StudentsStore'
 
-import { compareAsc } from 'date-fns'
+import { subYears } from 'date-fns'
 import { v4 as uuidv4 } from 'uuid'
 import { format } from 'date-fns'
-import { calculateAge, capitalize } from '@/lib/helpers'
+import { calculateAge, capitalize, validNameInput } from '@/lib/helpers'
 
 const props = defineProps<{ student?: Student }>()
 const emits = defineEmits<{ (e: 'register'): void; (e: 'edit'): void }>()
@@ -19,93 +19,87 @@ const emits = defineEmits<{ (e: 'register'): void; (e: 'edit'): void }>()
 const studentStore = useStudentStore()
 
 const isEditing = computed(() => !!props.student)
+const defaultDate = computed(() => subYears(new Date(), MIN_AGE))
+const lastDate = computed(() => subYears(new Date(), MAX_AGE))
 
 const studentFormRef = ref<FormInstance>()
 const studentForm = reactive<StudentForm>({
   firstName: props.student?.firstName || '',
   middleName: props.student?.middleName || '',
   lastName: props.student?.lastName || '',
-  birthdate: props.student?.birthdate || new Date(),
+  birthdate: props.student?.birthdate || defaultDate.value,
   age: props.student?.age || '',
   address: props.student?.address || '',
   course: props.student?.course || courses[0],
 })
 
-watch(
-  () => studentForm.birthdate,
-  () => {
-    studentForm.age = calculateAge(studentForm.birthdate)
-  },
-)
-
-function validateAge(rule: any, value: any, callback: any) {
-  if (value === '') {
-    callback(new Error('Age is required'))
-  } else if (value < 18) {
-    callback(new Error('Age should be 18 or older'))
-  } else if (value > 100) {
-    callback(new Error('Age should not go over 100'))
-  } else if (typeof value !== 'number') {
-    callback(new Error('Age should be a number'))
-  } else {
-    callback()
-  }
-}
+watchEffect(() => {
+  studentForm.age = calculateAge(studentForm.birthdate)
+})
 
 function validateNames(rule: any, value: any, callback: any) {
-  if (!/^[a-zA-Z\s]+$/.test(value)) {
-    const field = rule.field.split(/(?=[A-Z])/g)
+  const field = rule.field.split(/(?=[A-Z])/g)
+  const fieldString = `${capitalize(field[0])} ${field[1][0].toLowerCase() + field[1].slice(1)}`
+  const trimmedValue = value.trim()
+  const nameRegex =
+    /^(?!-)(?!.*\s{2})(?!.*[\p_]{2,})(?!.*\d)[a-zA-Z\s-\u00C0-\u024F\u1E00-\u1EFF]+.*(?<!-)$/g
 
-    return new Error(
-      `${field[0][0].toUpperCase() + field[0].slice(1)} ${field[1][0].toLowerCase() + field[1].slice(1)} can only contain letters and spaces`,
-    )
+  if (!trimmedValue && rule.field !== 'middleName') {
+    return new Error(`${fieldString} is required`)
+  }
+
+  if (trimmedValue) {
+    // [a-zA-Z\s-]
+    // [a-zA-Z\u00C0-\u024F\u1E00-\u1EFF-\S*]
+    // ^(?!.*\s{2})(?!.*__)[a-zA-Z\s-\u00C0-\u024F\u1E00-\u1EFF]+(?!.*\d).*$
+    if (!nameRegex.test(value)) {
+      return new Error(
+        `${fieldString} can only contain letters, spaces, and a single dashes between names`,
+      )
+    }
+    if (trimmedValue.length > 20) {
+      return new Error(`${fieldString} cannot exceed 20 characters`)
+    }
+    if (trimmedValue.length < 2) {
+      return new Error(`${fieldString} must be at least 2 characters`)
+    }
+
+    if (!validNameInput(trimmedValue)) {
+      return new Error(
+        `${fieldString} is invalid. You cannot repeat a name inbetween dashes more than three times`,
+      )
+    }
   }
 
   return callback()
 }
 
-function validateDate(rule: any, value: Date, callback: any) {
-  if (compareAsc(new Date(value), Date()) > 0) {
-    return new Error('Date cannot be later than today')
+function validateAddress(rule: any, value: any, callback: any) {
+  if (!value.trim()) {
+    return new Error(`${capitalize(rule.field)} is required`)
+  }
+
+  if (value.trim().length > 300) {
+    return new Error(`${capitalize(rule.field)} cannot exceed 300 characters`)
+  }
+
+  if (value.trim().length < 10) {
+    return new Error(`${capitalize(rule.field)} must be at least 10 characters`)
   }
 
   return callback()
 }
 
 const studentFormRules = reactive<FormRules<StudentForm>>({
-  firstName: [
-    { required: true, message: 'First Name is required', trigger: 'blur' },
-    { max: 20, message: 'First Name cannot exceed 20 characters', trigger: 'blur' },
-    { min: 2, message: 'First Name must be at least 2 characters', trigger: 'blur' },
-    { validator: validateNames, trigger: 'blur' },
-  ],
+  firstName: [{ validator: validateNames, trigger: 'blur' }],
 
-  middleName: [
-    { required: true, message: 'Middle Name is required', trigger: 'blur' },
-    { max: 30, message: 'Middle Name cannot exceed 30 characters', trigger: 'blur' },
-    { min: 2, message: 'Middle Name must be at least 2 characters', trigger: 'blur' },
-    { validator: validateNames, trigger: 'blur' },
-  ],
+  middleName: [{ validator: validateNames, trigger: 'blur' }],
 
-  lastName: [
-    { required: true, message: 'Last Name is required', trigger: 'blur' },
-    { max: 20, message: 'Last Name cannot exceed 20 characters', trigger: 'blur' },
-    { min: 2, message: 'Last Name must be at least 2 characters', trigger: 'blur' },
-    { validator: validateNames, trigger: 'blur' },
-  ],
+  lastName: [{ validator: validateNames, trigger: 'blur' }],
 
-  birthdate: [
-    { required: true, message: 'Birthdate is required', trigger: 'blur' },
-    { validator: validateDate, trigger: 'blur' },
-  ],
+  birthdate: [{ required: true, message: 'Birthdate is required', trigger: 'blur' }],
 
-  age: [{ validator: validateAge, trigger: 'blur' }],
-
-  address: [
-    { required: true, message: 'Address is required', trigger: 'blur' },
-    { max: 300, message: 'Address cannot exceed 300 characters', trigger: 'blur' },
-    { min: 10, message: 'Address must be at least 10 characters', trigger: 'blur' },
-  ],
+  address: [{ validator: validateAddress, trigger: 'blur' }],
 
   course: [{ required: true, message: 'Please select a course', trigger: 'blur' }],
 })
@@ -113,23 +107,24 @@ const studentFormRules = reactive<FormRules<StudentForm>>({
 async function submitForm(formEl: FormInstance | undefined) {
   if (!formEl) return
 
-  const newStudent = {
-    firstName: capitalize(studentForm.firstName),
-    middleName: capitalize(studentForm.middleName),
-    lastName: capitalize(studentForm.lastName),
-    birthdate: format(studentForm.birthdate, 'LLL dd, yyyy'),
-    age: Number(studentForm.age),
-    address: studentForm.address.trim(),
-    course: studentForm.course,
-  }
-
   await formEl.validate((valid, fields) => {
     if (valid) {
+      const newStudent = {
+        firstName: capitalize(studentForm.firstName),
+        middleName: studentForm.middleName?.trim() ? capitalize(studentForm.middleName) : '',
+        lastName: capitalize(studentForm.lastName),
+        birthdate: format(studentForm.birthdate, 'LLL dd, yyyy'),
+        age: Number(studentForm.age),
+        address: studentForm.address.trim(),
+        course: studentForm.course as Course,
+      }
+
       if (isEditing.value) {
         emits('edit')
-        studentStore.editStudent(props.student?.id, {
-          id: props.student?.id,
+        studentStore.editStudent(props.student!.id, {
+          id: props.student!.id,
           renderId: uuidv4(),
+          registeredDate: props.student!.registeredDate,
           ...newStudent,
         })
       } else {
@@ -137,6 +132,7 @@ async function submitForm(formEl: FormInstance | undefined) {
         studentStore.registerStudent({
           id: uuidv4(),
           renderId: uuidv4(),
+          registeredDate: new Date(),
           ...newStudent,
         })
         formEl.resetFields()
@@ -154,10 +150,15 @@ const resetForm = (formEl: FormInstance | undefined) => {
 </script>
 
 <template>
-  <el-form ref="studentFormRef" :model="studentForm" :rules="studentFormRules">
+  <el-form
+    ref="studentFormRef"
+    :model="studentForm"
+    :rules="studentFormRules"
+    @submit.prevent="submitForm(studentFormRef)"
+  >
     <div>
       <el-form-item label="First Name" label-position="top" prop="firstName">
-        <el-input v-model="studentForm.firstName" pattern="[a-zA-Z]*" />
+        <el-input v-model="studentForm.firstName" />
       </el-form-item>
 
       <el-form-item label="Middle Name" label-position="top" prop="middleName">
@@ -176,13 +177,15 @@ const resetForm = (formEl: FormInstance | undefined) => {
               type="date"
               placeholder="Pick a date"
               style="width: 100%"
+              :editable="false"
+              :disabled-date="(date: Date) => date > defaultDate || date < lastDate"
             />
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
           <el-form-item label="Age" label-position="top" prop="age">
-            <el-input v-model.number="studentForm.age" />
+            <el-input v-model.number="studentForm.age" disabled />
           </el-form-item>
         </el-col>
       </el-row>
@@ -192,7 +195,12 @@ const resetForm = (formEl: FormInstance | undefined) => {
       </el-form-item>
 
       <el-form-item label="Course" label-position="top" prop="course">
-        <el-select v-model="studentForm.course" placeholder="Please Choose a Course" size="large">
+        <el-select
+          v-model="studentForm.course"
+          placeholder="Please Choose a Course"
+          size="large"
+          fit-input-width
+        >
           <el-option value="Please Choose a Course" disabled />
           <el-option v-for="course in courses" :key="course" :label="course" :value="course" />
         </el-select>
@@ -201,7 +209,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
     <div class="buttons">
       <el-button @click="resetForm(studentFormRef)"> Reset </el-button>
-      <el-button type="primary" @click="submitForm(studentFormRef)">
+      <el-button type="primary" native-type="submit">
         {{ isEditing ? 'Edit' : 'Register' }}
       </el-button>
     </div>

@@ -39,7 +39,12 @@ async function submitForm(formEl: FormInstance | undefined) {
 </script>
 
 <template>
-  <el-form ref="findAccountFormRef" :rules="findAccountRules" :model="passwordResetForm">
+  <el-form
+    ref="findAccountFormRef"
+    :rules="findAccountRules"
+    :model="passwordResetForm"
+    @submit.prevent="submitForm(findAccountFormRef)"
+  >
     <h1>Account Recovery</h1>
 
     <p>Please enter a username of one of your accounts to reset your password</p>
@@ -52,7 +57,7 @@ async function submitForm(formEl: FormInstance | undefined) {
     </el-form-item>
 
     <el-form-item>
-      <el-button type="primary" @click="submitForm(findAccountFormRef)"> Search </el-button>
+      <el-button type="primary" native-type="submit"> Search </el-button>
     </el-form-item>
   </el-form>
 </template>

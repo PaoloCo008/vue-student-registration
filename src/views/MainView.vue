@@ -3,7 +3,6 @@ import AppDrawer from '@/components/AppDrawer.vue'
 import MainControls from '@/components/controls/MainControls.vue'
 import StudentForm from '@/components/forms/StudentForm.vue'
 import StudentList from '@/components/students/StudentList.vue'
-// import StudentTable from '@/components/StudentTable.vue'
 
 import { useAuthStore } from '@/stores/AuthStore'
 import { useStudentStore } from '@/stores/StudentsStore'
@@ -119,7 +118,7 @@ function showClick() {
   font-size: 1.25rem;
   padding: 1.25rem 1.5rem;
   position: fixed;
-  bottom: 2rem;
+  bottom: 2.5rem;
   right: 2rem;
   z-index: 999;
 }
@@ -132,7 +131,7 @@ function showClick() {
 .wrapper {
   max-width: 1500px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 0.75rem 0 3rem;
 }
 
 .el-tag--dark {
