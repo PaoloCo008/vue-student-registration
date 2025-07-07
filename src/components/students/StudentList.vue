@@ -9,7 +9,7 @@ const studentStore = useStudentStore()
 <template>
   <div class="card-wrapper">
     <StudentCard
-      v-for="student in studentStore.getSortedStudents"
+      v-for="student in studentStore.getPaginatedStudents"
       :key="student.renderId"
       :student
     />

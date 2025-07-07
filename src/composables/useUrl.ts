@@ -16,6 +16,10 @@ export default function useUrl(
   )
 
   let callback = () => {
+    if (key !== 'page') {
+      removeUrlQuery(routeName, key)
+    }
+
     if (controlRef.value !== defaultValue) {
       setUrlQuery(routeName, key, controlRef.value as string)
     } else {

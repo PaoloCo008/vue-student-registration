@@ -12,6 +12,7 @@ import { subYears } from 'date-fns'
 import { v4 as uuidv4 } from 'uuid'
 import { format } from 'date-fns'
 import { calculateAge, capitalize, validNameInput } from '@/lib/helpers'
+import AddressSearch from '../AddressSearch.vue'
 
 const props = defineProps<{ student?: Student }>()
 const emits = defineEmits<{ (e: 'register'): void; (e: 'edit'): void }>()
@@ -42,7 +43,7 @@ function validateNames(rule: any, value: any, callback: any) {
   const fieldString = `${capitalize(field[0])} ${field[1][0].toLowerCase() + field[1].slice(1)}`
   const trimmedValue = value.trim()
   const nameRegex =
-    /^(?!-)(?!.*\s{2})(?!.*[\p_]{2,})(?!.*\d)[a-zA-Z\s-\u00C0-\u024F\u1E00-\u1EFF]+.*(?<!-)$/g
+    /^(?!-)(?!.*\s{2})(?!.*[\p_]{2,})(?!.*\d)[\u00C0-\u024F\u1E00-\u1EFFa-zA-Z\s-]+.*(?<!-)$/gim
 
   if (!trimmedValue && rule.field !== 'middleName') {
     return new Error(`${fieldString} is required`)
@@ -194,6 +195,10 @@ const resetForm = (formEl: FormInstance | undefined) => {
         <el-input v-model="studentForm.address" />
       </el-form-item>
 
+      <el-form-item label="test">
+        <AddressSearch />
+      </el-form-item>
+
       <el-form-item label="Course" label-position="top" prop="course">
         <el-select
           v-model="studentForm.course"
@@ -227,6 +232,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 .el-form-item {
   margin-bottom: 2rem;
+  position: relative;
 }
 
 .buttons {

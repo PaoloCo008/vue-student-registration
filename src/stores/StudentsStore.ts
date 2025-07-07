@@ -7,7 +7,7 @@ import type { Student } from '@/types/globals'
 
 import useLocalStorage from '@/composables/useLocalStorage'
 
-import { students } from '@/lib/constants'
+import { PAGE_SIZE, students } from '@/lib/constants'
 import { getFullName } from '@/lib/helpers'
 
 export const useStudentStore = defineStore('students', () => {
@@ -93,7 +93,21 @@ export const useStudentStore = defineStore('students', () => {
     return students
   })
 
-  const getStudentCount = computed(() => {
+  const getPaginatedStudents = computed(() => {
+    const pageQuery = Number(route.query.page) || 1
+
+    const students = getSortedStudents.value
+
+    const skip = (pageQuery - 1) * PAGE_SIZE
+
+    return students.slice(skip, skip + PAGE_SIZE)
+  })
+
+  const getPaginatedStudentCount = computed(() => {
+    return getPaginatedStudents.value.length
+  })
+
+  const getTotalStudentCount = computed(() => {
     return getSortedStudents.value.length
   })
 
@@ -148,9 +162,11 @@ export const useStudentStore = defineStore('students', () => {
 
   return {
     studentList,
-    getStudentCount,
+    getPaginatedStudentCount,
     getStudentById,
     getSortedStudents,
+    getPaginatedStudents,
+    getTotalStudentCount,
     registerStudent,
     deleteStudent,
     editStudent,

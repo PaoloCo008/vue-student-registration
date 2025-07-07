@@ -51,3 +51,4 @@ export const student: Student = {
 
 export const MIN_AGE = 18
 export const MAX_AGE = 100
+export const PAGE_SIZE = 12

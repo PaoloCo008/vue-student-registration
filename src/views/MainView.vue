@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import AppDrawer from '@/components/AppDrawer.vue'
+import AppPagination from '@/components/AppPagination.vue'
 import MainControls from '@/components/controls/MainControls.vue'
 import StudentForm from '@/components/forms/StudentForm.vue'
 import StudentList from '@/components/students/StudentList.vue'
+import { PAGE_SIZE } from '@/lib/constants'
 
 import { useAuthStore } from '@/stores/AuthStore'
 import { useStudentStore } from '@/stores/StudentsStore'
@@ -49,8 +51,8 @@ function showClick() {
           <h2 class="body-header__main">Registered Students</h2>
 
           <el-tag effect="dark" round>
-            <span v-if="studentStore.getStudentCount !== 1">
-              {{ studentStore.getStudentCount }} Students
+            <span v-if="studentStore.getPaginatedStudentCount !== 1">
+              {{ studentStore.getPaginatedStudentCount }} Students
             </span>
             <span v-else> 1 Student </span>
           </el-tag>
@@ -61,6 +63,9 @@ function showClick() {
 
         <StudentList v-if="studentStore.getSortedStudents.length > 0" />
         <el-empty v-else description="No current students" />
+
+        <!-- Pagination -->
+        <AppPagination />
       </div>
     </el-main>
 
@@ -132,6 +137,9 @@ function showClick() {
   max-width: 1500px;
   margin: 0 auto;
   padding: 0.75rem 0 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .el-tag--dark {
