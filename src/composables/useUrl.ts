@@ -16,10 +16,6 @@ export default function useUrl(
   )
 
   let callback = () => {
-    if (key !== 'page') {
-      removeUrlQuery(routeName, key)
-    }
-
     if (controlRef.value !== defaultValue) {
       setUrlQuery(routeName, key, controlRef.value as string)
     } else {
@@ -43,6 +39,10 @@ export default function useUrl(
 
   function setUrlQuery(pathName: string, key: string, value: string) {
     const query = { ...route.query, [key]: value.trim() }
+
+    if (key !== 'page') {
+      delete query['page']
+    }
 
     router.replace({ name: pathName, query })
   }

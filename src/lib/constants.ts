@@ -21,7 +21,7 @@ export const sortByOptions = [
   { value: 'name-asc', label: 'Sort by name (ascending)' },
 ]
 
-export const students: Student[] = Array.from({ length: 10 }, () => {
+export const students: Student[] = Array.from({ length: 100 }, () => {
   return {
     id: uuidv4(),
     renderId: uuidv4(),

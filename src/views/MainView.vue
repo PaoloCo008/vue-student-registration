@@ -4,7 +4,6 @@ import AppPagination from '@/components/AppPagination.vue'
 import MainControls from '@/components/controls/MainControls.vue'
 import StudentForm from '@/components/forms/StudentForm.vue'
 import StudentList from '@/components/students/StudentList.vue'
-import { PAGE_SIZE } from '@/lib/constants'
 
 import { useAuthStore } from '@/stores/AuthStore'
 import { useStudentStore } from '@/stores/StudentsStore'
@@ -61,11 +60,12 @@ function showClick() {
         <!-- Controls -->
         <MainControls />
 
-        <StudentList v-if="studentStore.getSortedStudents.length > 0" />
+        <!-- Student List -->
+        <StudentList v-if="!!studentStore.getPaginatedStudentCount" />
         <el-empty v-else description="No current students" />
 
         <!-- Pagination -->
-        <AppPagination />
+        <AppPagination v-if="!!studentStore.getPaginatedStudentCount" />
       </div>
     </el-main>
 

@@ -17,6 +17,7 @@ function handleClick(pageNumber: string) {
     size="large"
     @change="handleClick"
     hide-on-single-page
+    :default-current-page="Number(pageRef)"
     :page-size="PAGE_SIZE"
     :pager-count="5"
     layout="prev, pager, next"

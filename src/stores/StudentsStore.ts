@@ -100,7 +100,9 @@ export const useStudentStore = defineStore('students', () => {
 
     const skip = (pageQuery - 1) * PAGE_SIZE
 
-    return students.slice(skip, skip + PAGE_SIZE)
+    const hasStudent = Math.ceil(students.length / PAGE_SIZE)
+
+    return hasStudent ? students.slice(skip, skip + PAGE_SIZE) : []
   })
 
   const getPaginatedStudentCount = computed(() => {
