@@ -12,7 +12,6 @@ import { subYears } from 'date-fns'
 import { v4 as uuidv4 } from 'uuid'
 import { format } from 'date-fns'
 import { calculateAge, capitalize, validNameInput } from '@/lib/helpers'
-import AddressSearch from '../AddressSearch.vue'
 
 const props = defineProps<{ student?: Student }>()
 const emits = defineEmits<{ (e: 'register'): void; (e: 'edit'): void }>()
@@ -28,8 +27,8 @@ const studentForm = reactive<StudentForm>({
   firstName: props.student?.firstName || '',
   middleName: props.student?.middleName || '',
   lastName: props.student?.lastName || '',
-  birthdate: props.student?.birthdate || defaultDate.value,
-  age: props.student?.age || '',
+  birthdate: '',
+  age: '',
   address: props.student?.address || '',
   course: props.student?.course || courses[0],
 })
@@ -43,7 +42,7 @@ function validateNames(rule: any, value: any, callback: any) {
   const fieldString = `${capitalize(field[0])} ${field[1][0].toLowerCase() + field[1].slice(1)}`
   const trimmedValue = value.trim()
   const nameRegex =
-    /^(?!-)(?!.*\s{2})(?!.*[\p_]{2,})(?!.*\d)[\u00C0-\u024F\u1E00-\u1EFFa-zA-Z\s-]+.*(?<!-)$/gim
+    /^(?!-)(?!.*\s{2})(?!.*[\p_]{2,})(?!.*\d)[\u00C0-\u024F\u1E00-\u1EFFa-zA-Z\s#&()-`.+,/\"]+.*(?<!-)$/gim
 
   if (!trimmedValue && rule.field !== 'middleName') {
     return new Error(`${fieldString} is required`)
@@ -76,31 +75,43 @@ function validateNames(rule: any, value: any, callback: any) {
 }
 
 function validateAddress(rule: any, value: any, callback: any) {
-  if (!value.trim()) {
+  const addressRegex =
+    /^(?!-)(?!.*\s{2})(?!.*[!])(?!.*[\W_-]{2,})[#.&,()_-`.+,'"\\/\u00C0-\u024F\u1E00-\u1EFFa-zA-Z\s]+.*(?<!-)$/gim
+
+  const trimmedValue = value.trim()
+
+  if (!trimmedValue) {
     return new Error(`${capitalize(rule.field)} is required`)
   }
+  if (trimmedValue) {
+    if (!addressRegex.test(trimmedValue)) {
+      return new Error(
+        `${capitalize(rule.field)} can only contain letters, numbers, single spaces, and valid special characters`,
+      )
+    }
 
-  if (value.trim().length > 300) {
-    return new Error(`${capitalize(rule.field)} cannot exceed 300 characters`)
-  }
+    if (trimmedValue.length > 300) {
+      return new Error(`${capitalize(rule.field)} cannot exceed 300 characters`)
+    }
 
-  if (value.trim().length < 10) {
-    return new Error(`${capitalize(rule.field)} must be at least 10 characters`)
+    if (trimmedValue.length < 10) {
+      return new Error(`${capitalize(rule.field)} must be at least 10 characters`)
+    }
   }
 
   return callback()
 }
 
 const studentFormRules = reactive<FormRules<StudentForm>>({
-  firstName: [{ validator: validateNames, trigger: 'blur' }],
+  firstName: [{ required: true, validator: validateNames, trigger: 'blur' }],
 
   middleName: [{ validator: validateNames, trigger: 'blur' }],
 
-  lastName: [{ validator: validateNames, trigger: 'blur' }],
+  lastName: [{ required: true, validator: validateNames, trigger: 'blur' }],
 
   birthdate: [{ required: true, message: 'Birthdate is required', trigger: 'blur' }],
 
-  address: [{ validator: validateAddress, trigger: 'blur' }],
+  address: [{ required: true, validator: validateAddress, trigger: 'blur' }],
 
   course: [{ required: true, message: 'Please select a course', trigger: 'blur' }],
 })
@@ -162,7 +173,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
         <el-input v-model="studentForm.firstName" />
       </el-form-item>
 
-      <el-form-item label="Middle Name" label-position="top" prop="middleName">
+      <el-form-item label="Middle Name (Optional)" label-position="top" prop="middleName">
         <el-input v-model="studentForm.middleName" />
       </el-form-item>
 
@@ -193,10 +204,6 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
       <el-form-item label="Address" label-position="top" prop="address">
         <el-input v-model="studentForm.address" />
-      </el-form-item>
-
-      <el-form-item label="test">
-        <AddressSearch />
       </el-form-item>
 
       <el-form-item label="Course" label-position="top" prop="course">

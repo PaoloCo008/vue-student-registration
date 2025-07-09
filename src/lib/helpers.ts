@@ -25,6 +25,10 @@ export function truncate(word: string, maxChars: number) {
 }
 
 export function calculateAge(date: Date | string) {
+  if (!date) {
+    return ''
+  }
+
   const birthDate = new Date(date)
 
   const diff = Date.now() - birthDate.getTime()
